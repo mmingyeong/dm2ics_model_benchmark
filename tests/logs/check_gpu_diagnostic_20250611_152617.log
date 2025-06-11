@@ -1,0 +1,79 @@
+2025-06-11 15:26:17,065 [INFO] 🚀 Starting extended GPU availability check...
+2025-06-11 15:26:17,068 [INFO] Torch version: 1.12.1
+2025-06-11 15:26:17,070 [INFO] Python version: 3.10.9 (main, Mar  1 2023, 18:23:06) [GCC 11.2.0]
+2025-06-11 15:26:17,070 [INFO] Platform: linux
+2025-06-11 15:26:17,092 [INFO] 🔍 Checking nvidia-smi...
+2025-06-11 15:26:19,866 [INFO] nvidia-smi output:
+Wed Jun 11 15:26:17 2025       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 550.107.02             Driver Version: 550.107.02     CUDA Version: 12.4     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A100-PCIE-40GB          Off |   00000000:3D:00.0 Off |                    0 |
+| N/A   31C    P0             38W /  250W |     453MiB /  40960MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA A100-PCIE-40GB          Off |   00000000:3F:00.0 Off |                    0 |
+| N/A   32C    P0             35W /  250W |   30779MiB /  40960MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA A100-PCIE-40GB          Off |   00000000:41:00.0 Off |                    0 |
+| N/A   33C    P0             36W /  250W |      39MiB /  40960MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA A100-PCIE-40GB          Off |   00000000:61:00.0 Off |                    0 |
+| N/A   29C    P0             32W /  250W |      39MiB /  40960MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   4  NVIDIA A100 80GB PCIe          Off |   00000000:62:00.0 Off |                    0 |
+| N/A   34C    P0             43W /  300W |      39MiB /  81920MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   5  NVIDIA A100-PCIE-40GB          Off |   00000000:63:00.0 Off |                    0 |
+| N/A   31C    P0             30W /  250W |      39MiB /  40960MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+|   6  NVIDIA A100-PCIE-40GB          Off |   00000000:64:00.0 Off |                    0 |
+| N/A   31C    P0             35W /  250W |      39MiB /  40960MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A      9108    M+C   ...onda3/2023.03/envs/py312/bin/python        414MiB |
+|    0   N/A  N/A    209065      C   nvidia-cuda-mps-server                         30MiB |
+|    1   N/A  N/A      9108    M+C   ...onda3/2023.03/envs/py312/bin/python      30740MiB |
+|    1   N/A  N/A    209065      C   nvidia-cuda-mps-server                         30MiB |
+|    2   N/A  N/A    209065      C   nvidia-cuda-mps-server                         30MiB |
+|    3   N/A  N/A    209065      C   nvidia-cuda-mps-server                         30MiB |
+|    4   N/A  N/A    209065      C   nvidia-cuda-mps-server                         30MiB |
+|    5   N/A  N/A    209065      C   nvidia-cuda-mps-server                         30MiB |
+|    6   N/A  N/A    209065      C   nvidia-cuda-mps-server                         30MiB |
++-----------------------------------------------------------------------------------------+
+
+2025-06-11 15:26:19,867 [INFO] CUDA_HOME/CUDA_PATH: /usr/local/cuda-11.8
+2025-06-11 15:26:19,868 [INFO] PATH: /opt/anaconda3/2023.03/bin:/usr/local/cuda-11.8/bin:/usr/local/bin:/usr/local/sm/bin:/opt/anaconda3/2023.03/condabin:/usr/opt/intel/oneapi/advisor/2022.0.0/bin64:/usr/opt/intel/oneapi/vtune/2022.0.0/bin64:/usr/opt/intel/oneapi/compiler/2022.0.2/linux/bin/intel64:/usr/opt/intel/oneapi/compiler/2022.0.2/linux/bin:/usr/opt/intel/oneapi/compiler/2022.0.2/linux/lib/oclfpga/bin:/usr/opt/intel/oneapi/debugger/2021.5.0/gdb/intel64/bin:/usr/local/cuda-11.0/bin:/usr/local/cuda-11.0/samples/bin/x86_64/linux/release:/usr/local/NaMaster/bin:/opt/gsl/2.6/bin:/usr/local/openmpi-2.1.1-intel2017/bin:/usr/local/mpich/bin:/usr/local/mpich2/bin:/usr/local/pbs/sbin:/usr/local/pbs/bin:/usr/local/maui/sbin:/usr/local/maui/bin:/usr/local/bwatch:/usr/local/hpc/bin:/opt/absoft/bin:/usr/local/ldap/bin:/usr/local/ldap/sbin:/usr/lib64/qt-3.3/bin:/home/users/mmingyeong/perl5/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/usr/local/ganglia/bin:/home/users/mmingyeong/.local/bin:/home/users/mmingyeong/bin
+2025-06-11 15:26:19,869 [INFO] LD_LIBRARY_PATH: /usr/local/cuda-11.8/lib64:/usr/opt/intel/oneapi/mkl/2022.0.2/lib/intel64:/usr/opt/intel/oneapi/compiler/2022.0.2/linux/lib/oclfpga/host/linux64/lib:/usr/opt/intel/oneapi/compiler/2022.0.2/linux/lib:/usr/opt/intel/oneapi/compiler/2022.0.2/linux/lib/x64:/usr/opt/intel/oneapi/compiler/2022.0.2/linux/compiler/lib/intel64_lin:/usr/opt/intel/oneapi/tbb/2021.5.1/lib/intel64/gcc4.8:/usr/opt/intel/oneapi/debugger/2021.5.0/gdb/intel64/lib:/usr/opt/intel/oneapi/debugger/2021.5.0/libipt/intel64/lib:/usr/opt/intel/oneapi/debugger/2021.5.0/dep/lib:/usr/local/cuda-11.0/lib64:/usr/local/cuda-11.0/lib:/usr/local/cuda-11.0/extras/CUPTI/lib64:/usr/local/NaMaster/lib:/usr/local/gsl/2.5/lib:/opt/gsl/2.6/lib:/usr/local/openmpi-2.1.1-intel2017/lib:/opt/intel/mkl/8.1.1/lib/em64t:
+2025-06-11 15:26:19,879 [INFO] 🔍 Checking torch.cuda properties...
+2025-06-11 15:26:19,881 [INFO] torch.cuda.is_available(): False
+2025-06-11 15:26:19,882 [INFO] torch.version.cuda: None
+2025-06-11 15:26:19,883 [INFO] torch.backends.cudnn.version(): None
+2025-06-11 15:26:19,884 [INFO] torch.cuda.device_count(): 0
+2025-06-11 15:26:19,885 [INFO] torch.cuda.current_device(): N/A
+2025-06-11 15:26:19,885 [INFO] torch.cuda.get_device_name(0): N/A
+2025-06-11 15:26:19,886 [INFO] torch._C module found.
+2025-06-11 15:26:19,982 [WARNING] ⚠ No GPU detected by PyTorch.
+2025-06-11 15:26:19,983 [WARNING] Possible reasons:
+2025-06-11 15:26:19,984 [WARNING] - NVIDIA driver not installed or not loaded
+2025-06-11 15:26:19,985 [WARNING] - CUDA toolkit not installed or not in PATH/LD_LIBRARY_PATH
+2025-06-11 15:26:19,986 [WARNING] - PyTorch not installed with CUDA support
+2025-06-11 15:26:19,987 [WARNING] - Running in a virtual environment without CUDA bindings
+2025-06-11 15:26:19,988 [WARNING] - Hardware issue or no NVIDIA GPU present
+2025-06-11 15:26:19,989 [INFO] ✅ Extended GPU check complete.
+2025-06-11 15:26:19,990 [INFO] 🔍 Log saved to: logs/check_gpu_diagnostic_20250611_152617.log

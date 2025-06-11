@@ -1,0 +1,37 @@
+############################################
+# Intelligent Queueing System ( HPC Korea) #
+############################################
+
+📁 Current directory: /caefs/user/mmingyeong/dm2ics_model_benchmark/dm2ics_model_benchmark/tests
+📅 Running on: anode1
+🐍 Python path: /opt/anaconda3/2023.03/envs/py312/bin/python
+🚦 Starting check_gpu.py...
+2025-06-10 21:10:17,295 [INFO] 🚀 Starting extended GPU availability check...
+2025-06-10 21:10:17,298 [INFO] Torch version: 2.6.0+cu124
+2025-06-10 21:10:17,298 [INFO] Python version: 3.12.0 | packaged by Anaconda, Inc. | (main, Oct  2 2023, 17:29:18) [GCC 11.2.0]
+2025-06-10 21:10:17,298 [INFO] Platform: linux
+2025-06-10 21:10:17,298 [INFO] 🔍 Checking nvidia-smi...
+2025-06-10 21:10:17,636 [WARNING] nvidia-smi failed:
+
+2025-06-10 21:10:17,636 [INFO] CUDA_HOME/CUDA_PATH: /usr/local/cuda-11.8
+2025-06-10 21:10:17,636 [INFO] PATH: /opt/anaconda3/2023.03/envs/py312/bin:/usr/local/cuda-11.8/bin:/usr/local/bin:/usr/local/sm/bin:/usr/opt/intel/oneapi/advisor/2022.0.0/bin64:/usr/opt/intel/oneapi/vtune/2022.0.0/bin64:/usr/opt/intel/oneapi/compiler/2022.0.2/linux/bin/intel64:/usr/opt/intel/oneapi/compiler/2022.0.2/linux/bin:/usr/opt/intel/oneapi/compiler/2022.0.2/linux/lib/oclfpga/bin:/usr/opt/intel/oneapi/debugger/2021.5.0/gdb/intel64/bin:/usr/local/cuda-11.0/bin:/usr/local/cuda-11.0/samples/bin/x86_64/linux/release:/usr/local/NaMaster/bin:/opt/gsl/2.6/bin:/usr/local/openmpi-2.1.1-intel2017/bin:/usr/local/mpich/bin:/usr/local/mpich2/bin:/usr/local/pbs/sbin:/usr/local/pbs/bin:/usr/local/maui/sbin:/usr/local/maui/bin:/usr/local/bwatch:/usr/local/hpc/bin:/opt/absoft/bin:/usr/local/ldap/bin:/usr/local/ldap/sbin:/usr/local/cuda-11.8/bin:/usr/local/bin:/usr/local/sm/bin:/opt/anaconda3/2023.03/condabin:/usr/local/mpich/bin:/usr/local/mpich2/bin:/usr/local/pbs/sbin:/usr/local/pbs/bin:/usr/local/maui/sbin:/usr/local/maui/bin:/usr/local/bwatch:/usr/local/hpc/bin:/opt/absoft/bin:/usr/local/ldap/bin:/usr/local/ldap/sbin:/usr/lib64/qt-3.3/bin:/home/users/mmingyeong/perl5/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/usr/local/ganglia/bin:/home/users/mmingyeong/.local/bin:/home/users/mmingyeong/bin:/usr/local/ganglia/bin
+2025-06-10 21:10:17,637 [INFO] LD_LIBRARY_PATH: /usr/local/cuda-11.8/lib64:/usr/opt/intel/oneapi/mkl/2022.0.2/lib/intel64:/usr/opt/intel/oneapi/compiler/2022.0.2/linux/lib/oclfpga/host/linux64/lib:/usr/opt/intel/oneapi/compiler/2022.0.2/linux/lib:/usr/opt/intel/oneapi/compiler/2022.0.2/linux/lib/x64:/usr/opt/intel/oneapi/compiler/2022.0.2/linux/compiler/lib/intel64_lin:/usr/opt/intel/oneapi/tbb/2021.5.1/lib/intel64/gcc4.8:/usr/opt/intel/oneapi/debugger/2021.5.0/gdb/intel64/lib:/usr/opt/intel/oneapi/debugger/2021.5.0/libipt/intel64/lib:/usr/opt/intel/oneapi/debugger/2021.5.0/dep/lib:/usr/local/cuda-11.0/lib64:/usr/local/cuda-11.0/lib:/usr/local/cuda-11.0/extras/CUPTI/lib64:/usr/local/NaMaster/lib:/usr/local/gsl/2.5/lib:/opt/gsl/2.6/lib:/usr/local/openmpi-2.1.1-intel2017/lib:/opt/intel/mkl/8.1.1/lib/em64t:/usr/local/cuda-11.8/lib64:/opt/intel/mkl/8.1.1/lib/em64t:
+2025-06-10 21:10:17,637 [INFO] 🔍 Checking torch.cuda properties...
+2025-06-10 21:10:18,643 [INFO] torch.cuda.is_available(): False
+2025-06-10 21:10:18,643 [INFO] torch.version.cuda: 12.4
+2025-06-10 21:10:18,647 [INFO] torch.backends.cudnn.version(): 90100
+/opt/anaconda3/2023.03/envs/py312/lib/python3.12/site-packages/torch/cuda/__init__.py:734: UserWarning: Can't initialize NVML
+  warnings.warn("Can't initialize NVML")
+2025-06-10 21:10:18,932 [INFO] torch.cuda.device_count(): 0
+2025-06-10 21:10:18,932 [INFO] torch.cuda.current_device(): N/A
+2025-06-10 21:10:18,932 [INFO] torch.cuda.get_device_name(0): N/A
+2025-06-10 21:10:18,932 [INFO] torch._C module found.
+2025-06-10 21:10:18,932 [WARNING] ⚠ No GPU detected by PyTorch.
+2025-06-10 21:10:18,933 [WARNING] Possible reasons:
+2025-06-10 21:10:18,933 [WARNING] - NVIDIA driver not installed or not loaded
+2025-06-10 21:10:18,933 [WARNING] - CUDA toolkit not installed or not in PATH/LD_LIBRARY_PATH
+2025-06-10 21:10:18,933 [WARNING] - PyTorch not installed with CUDA support
+2025-06-10 21:10:18,933 [WARNING] - Running in a virtual environment without CUDA bindings
+2025-06-10 21:10:18,933 [WARNING] - Hardware issue or no NVIDIA GPU present
+2025-06-10 21:10:18,934 [INFO] ✅ Extended GPU check complete.
+2025-06-10 21:10:18,934 [INFO] 🔍 Log saved to: logs/check_gpu_diagnostic_20250610_211017.log

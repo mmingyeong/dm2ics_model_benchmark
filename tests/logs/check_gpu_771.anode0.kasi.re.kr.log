@@ -1,0 +1,14 @@
+############################################
+# Intelligent Queueing System ( HPC Korea) #
+############################################
+
+📁 Current directory: /caefs/user/mmingyeong/dm2ics_model_benchmark/dm2ics_model_benchmark/tests
+📅 Running on: anode1
+🐍 Python path: /home/users/mmingyeong/.conda/envs/new_env/bin/python
+🚦 Starting check_gpu.py...
+2025-06-10 17:43:10,954 [INFO] 🚀 Starting GPU availability check...
+2025-06-10 17:43:10,955 [INFO] Torch version: 2.6.0+cu118
+2025-06-10 17:43:12,079 [INFO] GPU available: False
+2025-06-10 17:43:12,079 [WARNING] ⚠ No GPU detected.
+2025-06-10 17:43:12,080 [INFO] ✅ GPU check complete.
+2025-06-10 17:43:12,080 [INFO] 🔍 Log saved to: logs/check_gpu_20250610_174310.log

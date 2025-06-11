@@ -1,0 +1,18 @@
+#!/bin/bash
+#PBS -N check_gpu
+#PBS -q long
+#PBS -l nodes=1:gpus=1
+#PBS -l walltime=00:03:00
+#PBS -o logs/check_gpu_${PBS_JOBID}.log
+#PBS -j oe
+
+cd $PBS_O_WORKDIR
+source ~/.bashrc
+conda activate py312
+
+echo "📁 Current directory: $(pwd)"
+echo "📅 Running on: $(hostname)"
+echo "🐍 Python path: $(which python)"
+echo "🚦 Starting check_gpu.py..."
+
+python check_gpu.py
