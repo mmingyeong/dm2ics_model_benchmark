@@ -21,48 +21,58 @@ License:
     For academic use only. Contact the author before redistribution.
 """
 
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+
 import logging
 import os
-from datetime import datetime
 
-def get_logger(name: str, log_dir: str = "logs", level=logging.INFO) -> logging.Logger:
+def get_logger(name: str, log_dir: str = None, filename: str = None) -> logging.Logger:
     """
-    Creates a logger that outputs to both console and a timestamped log file.
+    Create or retrieve a logger instance with optional file logging.
 
     Parameters
     ----------
     name : str
-        Name of the logger (usually `__name__`).
-    log_dir : str
-        Directory to save log files.
-    level : int
-        Logging level (e.g., logging.INFO, logging.DEBUG).
+        Logger name.
+    log_dir : str, optional
+        Directory where log file will be saved. If None, uses environment variable
+        'DM2ICS_LOGDIR', or disables file logging if that is also unset.
+    filename : str, optional
+        Name of the log file. Defaults to "{name}.log".
 
     Returns
     -------
     logging.Logger
         Configured logger instance.
     """
-    os.makedirs(log_dir, exist_ok=True)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    log_path = os.path.join(log_dir, f"{name}_{timestamp}.log")
-
     logger = logging.getLogger(name)
-    logger.setLevel(level)
-    logger.propagate = False  # Avoid duplicated logs if multiple handlers
+    if logger.handlers:
+        return logger  # Avoid duplicate handlers
 
-    # Formatter
-    formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
-
-    # File handler
-    file_handler = logging.FileHandler(log_path)
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
+    logger.setLevel(logging.INFO)
+    formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")
 
     # Console handler
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(formatter)
-    logger.addHandler(stream_handler)
+    ch = logging.StreamHandler()
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
 
-    logger.info(f"Logger initialized. Outputting to {log_path}")
+    # Determine log directory
+    if log_dir is None:
+        log_dir = os.environ.get("DM2ICS_LOGDIR", None)
+
+    # Add file handler if log_dir is valid
+    if log_dir is not None:
+        try:
+            os.makedirs(log_dir, exist_ok=True)
+            if filename is None:
+                filename = f"{name}.log"
+            fh = logging.FileHandler(os.path.join(log_dir, filename))
+            fh.setFormatter(formatter)
+            logger.addHandler(fh)
+        except PermissionError:
+            logger.warning(f"⚠️ Cannot write to log_dir: {log_dir} (Permission Denied)")
+
     return logger

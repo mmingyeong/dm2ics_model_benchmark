@@ -1,0 +1,14 @@
+📌 Job ID: 824.anode0.kasi.re.kr
+📁 Log File: /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/scripts/logs/train_unet_824.anode0.kasi.re.kr.log
+🚀 Starting U-Net training job on anode12 at Thu Jun 12 17:08:57 KST 2025
+Traceback (most recent call last):
+  File "/home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/models/unet/train.py", line 34, in <module>
+    from shared.data_loader import get_dataloader
+  File "/home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/shared/data_loader.py", line 23, in <module>
+    logger = get_logger("data_loader", log_dir="logs")
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/shared/logger.py", line 49, in get_logger
+    os.makedirs(log_dir, exist_ok=True)
+  File "<frozen os>", line 225, in makedirs
+PermissionError: [Errno 13] Permission denied: 'logs'
+✅ Training completed at Thu Jun 12 17:09:01 KST 2025

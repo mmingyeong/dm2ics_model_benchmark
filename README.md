@@ -108,8 +108,8 @@ python evaluation/plot_power_spectrum.py
 
 This project assumes an HDF5 dataset containing 3D cube pairs of evolved density fields and corresponding initial conditions:
 
-* `input`: Dark matter overdensity map (e.g., shape `[N, 2, 128, 128, 128]`)
-* `target`: Initial density map (e.g., shape `[N, 1, 128, 128, 128]`)
+* `input`: Dark matter overdensity map (e.g., shape `[N, 1, 60, 60, 60]`)
+* `target`: Initial density map (e.g., shape `[N, 1, 60, 60, 60]`)
 
 Make sure `shared/data_loader.py` is configured to match your dataset structure.
 

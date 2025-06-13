@@ -1,0 +1,5 @@
+📌 Job ID: 821.anode0.kasi.re.kr
+📁 Log File: /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/scripts/logs/train_unet_821.anode0.kasi.re.kr.log
+🚀 Starting U-Net training job on anode12 at Thu Jun 12 17:04:36 KST 2025
+python: can't open file '//models/unet/train.py': [Errno 2] No such file or directory
+✅ Training completed at Thu Jun 12 17:04:37 KST 2025

@@ -1,0 +1,37 @@
+📌 Job ID: 832.anode0.kasi.re.kr
+📁 Log File: /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/scripts/logs/train_unet_832.anode0.kasi.re.kr.log
+🚀 Starting U-Net training job on anode12 at Thu Jun 12 17:41:43 KST 2025
+2025-06-12 17:41:46,565 | WARNING | data_loader | ⚠️ Cannot write to log_dir: logs (Permission Denied)
+2025-06-12 17:41:46,589 | INFO | train_unet | 🚀 Starting U-Net training with the following configuration:
+2025-06-12 17:41:46,590 | INFO | train_unet | {'input_path': '/caefs/data/IllustrisTNG/subcube/input', 'output_path': '/caefs/data/IllustrisTNG/subcube/output', 'batch_size': 4, 'epochs': 200, 'min_lr': 0.0001, 'max_lr': 0.001, 'patience': 10, 'alpha': 0.1, 'ckpt_dir': '/home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/results/unet', 'device': 'cuda'}
+2025-06-12 17:41:46,592 | INFO | data_loader | 📂 Split: train | Files: 7
+2025-06-12 17:41:46,592 | INFO | data_loader | 🔍 Initializing dataset with 7 file pairs.
+2025-06-12 17:41:46,606 | INFO | data_loader | 📦 Total samples across all files: 700000
+2025-06-12 17:41:46,607 | INFO | data_loader | 📂 Split: val | Files: 1
+2025-06-12 17:41:46,607 | INFO | data_loader | 🔍 Initializing dataset with 1 file pairs.
+2025-06-12 17:41:46,609 | INFO | data_loader | 📦 Total samples across all files: 100000
+Traceback (most recent call last):
+  File "/home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/models/unet/train.py", line 165, in <module>
+    train(args)
+  File "/home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/models/unet/train.py", line 81, in train
+    model = UNet3D().to(args.device)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/2023.03/envs/py312/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1343, in to
+    return self._apply(convert)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/2023.03/envs/py312/lib/python3.12/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/opt/anaconda3/2023.03/envs/py312/lib/python3.12/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/opt/anaconda3/2023.03/envs/py312/lib/python3.12/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/opt/anaconda3/2023.03/envs/py312/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1329, in convert
+    return t.to(
+           ^^^^^
+RuntimeError: CUDA error: CUDA-capable device(s) is/are busy or unavailable
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+✅ Training completed at Thu Jun 12 17:41:49 KST 2025
