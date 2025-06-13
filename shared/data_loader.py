@@ -10,10 +10,16 @@ Reference:
 - https://github.com/redeostm/ML_LocalEnv/blob/main/generatorSingle.py
 """
 
+import sys
 import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+
 import h5py
 import torch
+from glob import glob
 from torch.utils.data import Dataset
+from torch.utils.data import DataLoader
+
 from shared.logger import get_logger
 
 logger = get_logger("data_loader", log_dir="logs")
@@ -73,3 +79,48 @@ class HDF5Dataset(Dataset):
             y = torch.from_numpy(fout['subcubes'][local_idx]).float().unsqueeze(0)
 
         return x, y
+
+
+def get_dataloader(input_dir, output_dir, batch_size, split="train", shuffle=True):
+    """
+    Returns a DataLoader for the specified split by selecting appropriate HDF5 files.
+
+    Parameters
+    ----------
+    input_dir : str
+        Directory containing input HDF5 files.
+    output_dir : str
+        Directory containing corresponding output HDF5 files.
+    batch_size : int
+        Batch size for DataLoader.
+    split : str
+        One of ["train", "val", "test"].
+    shuffle : bool
+        Whether to shuffle the data.
+
+    Returns
+    -------
+    DataLoader
+        PyTorch DataLoader instance for the specified split.
+    """
+    all_input_files = sorted(glob(os.path.join(input_dir, "*.h5")))
+    all_output_files = sorted(glob(os.path.join(output_dir, "*.h5")))
+
+    assert len(all_input_files) == len(all_output_files), \
+        "Mismatch between number of input and output HDF5 files."
+
+    if split == "train":
+        selected_inputs = all_input_files[:7]
+        selected_outputs = all_output_files[:7]
+    elif split == "val":
+        selected_inputs = [all_input_files[7]]
+        selected_outputs = [all_output_files[7]]
+    elif split == "test":
+        selected_inputs = [all_input_files[8]]
+        selected_outputs = [all_output_files[8]]
+    else:
+        raise ValueError(f"Invalid split: {split}. Must be one of ['train', 'val', 'test'].")
+
+    logger.info(f"📂 Split: {split} | Files: {len(selected_inputs)}")
+    dataset = HDF5Dataset(selected_inputs, selected_outputs)
+    return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)

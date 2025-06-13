@@ -1,0 +1,21 @@
+📌 Job ID: 826.anode0.kasi.re.kr
+📁 Log File: /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/scripts/logs/train_unet_826.anode0.kasi.re.kr.log
+🚀 Starting U-Net training job on anode12 at Thu Jun 12 17:13:17 KST 2025
+2025-06-12 17:13:20,852 | WARNING | data_loader | ⚠️ Cannot write to log_dir: logs (Permission Denied)
+2025-06-12 17:13:20,880 | INFO | train_unet | 🚀 Starting U-Net training with the following configuration:
+2025-06-12 17:13:20,880 | INFO | train_unet | {'input_path': '/caefs/data/IllustrisTNG/subcube/input', 'output_path': '/caefs/data/IllustrisTNG/subcube/output', 'batch_size': 2, 'epochs': 200, 'min_lr': 0.0001, 'max_lr': 0.001, 'patience': 10, 'alpha': 0.1, 'ckpt_dir': 'results/unet', 'device': 'cuda'}
+2025-06-12 17:13:20,882 | INFO | data_loader | 📂 Split: train | Files: 7
+2025-06-12 17:13:20,882 | INFO | data_loader | 🔍 Initializing dataset with 7 file pairs.
+2025-06-12 17:13:20,898 | INFO | data_loader | 📦 Total samples across all files: 700000
+2025-06-12 17:13:20,900 | INFO | data_loader | 📂 Split: val | Files: 1
+2025-06-12 17:13:20,901 | INFO | data_loader | 🔍 Initializing dataset with 1 file pairs.
+2025-06-12 17:13:20,905 | INFO | data_loader | 📦 Total samples across all files: 100000
+Traceback (most recent call last):
+  File "/home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/models/unet/train.py", line 165, in <module>
+    train(args)
+  File "/home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/models/unet/train.py", line 87, in train
+    os.makedirs(args.ckpt_dir, exist_ok=True)
+  File "<frozen os>", line 215, in makedirs
+  File "<frozen os>", line 225, in makedirs
+PermissionError: [Errno 13] Permission denied: 'results'
+✅ Training completed at Thu Jun 12 17:13:27 KST 2025

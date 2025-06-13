@@ -1,0 +1,3 @@
+2025-06-12 15:56:45,839 [INFO] Logger initialized. Outputting to logs/data_loader_20250612_155645.log
+2025-06-12 15:56:45,845 [INFO] 🔍 Initializing dataset with 9 file pairs.
+2025-06-12 15:56:45,866 [INFO] 📦 Total samples across all files: 884736

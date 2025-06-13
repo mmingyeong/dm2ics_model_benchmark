@@ -1,0 +1,13 @@
+📌 Job ID: 833.anode0.kasi.re.kr
+📁 Log File: /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/scripts/logs/train_unet_833.anode0.kasi.re.kr.log
+🚀 Starting U-Net training job on anode12 at Thu Jun 12 17:44:25 KST 2025
+2025-06-12 17:44:28,306 | WARNING | data_loader | ⚠️ Cannot write to log_dir: logs (Permission Denied)
+2025-06-12 17:44:28,392 | INFO | train_unet | 🚀 Starting U-Net training with the following configuration:
+2025-06-12 17:44:28,392 | INFO | train_unet | {'input_path': '/caefs/data/IllustrisTNG/subcube/input', 'output_path': '/caefs/data/IllustrisTNG/subcube/output', 'batch_size': 4, 'epochs': 200, 'min_lr': 0.0001, 'max_lr': 0.001, 'patience': 10, 'alpha': 0.1, 'ckpt_dir': '/home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/results/unet', 'device': 'cuda'}
+2025-06-12 17:44:28,394 | INFO | data_loader | 📂 Split: train | Files: 7
+2025-06-12 17:44:28,394 | INFO | data_loader | 🔍 Initializing dataset with 7 file pairs.
+2025-06-12 17:44:28,410 | INFO | data_loader | 📦 Total samples across all files: 700000
+2025-06-12 17:44:28,412 | INFO | data_loader | 📂 Split: val | Files: 1
+2025-06-12 17:44:28,412 | INFO | data_loader | 🔍 Initializing dataset with 1 file pairs.
+2025-06-12 17:44:28,414 | INFO | data_loader | 📦 Total samples across all files: 100000
+Epoch [1/200]:   0%|                                                                                                                      | 0/175000 [00:00<?, ?it/s]Epoch [1/200]:   0%|                                                                                                           | 1/175000 [00:01<58:00:00,  1.19s/it]Epoch [1/200]:   0%|                                                                                                           | 2/175000 [00:02<52:37:55,  1.08s/it]Epoch [1/200]:   0%|                                                                                                           | 3/175000 [00:03<50:17:01,  1.03s/it]Epoch [1/200]:   0%|                                                                                                           | 4/175000 [00:04<53:51:51,  1.11s/it]Epoch [1/200]:   0%|                                                                                                           | 5/175000 [00:05<52:08:29,  1.07s/it]Epoch [1/200]:   0%|                                                                                                           | 6/175000 [00:06<51:07:35,  1.05s/it]Epoch [1/200]:   0%|                                                                                                           | 7/175000 [00:07<48:21:33,  1.01it/s]

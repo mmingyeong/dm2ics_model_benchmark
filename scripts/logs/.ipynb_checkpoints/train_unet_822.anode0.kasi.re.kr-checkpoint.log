@@ -1,0 +1,7 @@
+📌 Job ID: 822.anode0.kasi.re.kr
+📁 Log File: /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/scripts/logs/train_unet_822.anode0.kasi.re.kr.log
+🚀 Starting U-Net training job on anode12 at Thu Jun 12 17:05:32 KST 2025
+Traceback (most recent call last):
+  File "/home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/models/unet/train.py", line 31, in <module>
+    from shared.data_loader import get_dataloader
+ModuleNotFoundError: No module named 'shared'
