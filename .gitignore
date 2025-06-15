@@ -3,3 +3,14 @@
 
 # Ignore logs/ directory
 logs/
+
+# Ignore large model files
+*.pt
+results/unet/
+results/fno/
+tests/*.pt
+
+# Ignore large model files
+*.pt
+*.pth
+*.ckpt
