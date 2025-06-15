@@ -1,9 +1,11 @@
 """
-train_lightning_fno.py
+train.py
 
 Description:
-    PyTorch Lightning training script for the Fourier Neural Operator (FNO).
-    Includes early stopping and model checkpointing for best validation loss.
+    Training script for the Fourier Neural Operator (FNO) model.
+    Integrates custom model, logger, and data loader definitions.
+    Supports training loop with learning rate scheduler, TensorBoard logging,
+    checkpoint saving, and evaluation using a hybrid loss function.
 
 Author:
     Mingyeong Yang (양민경), PhD Student, UST-KASI
@@ -14,133 +16,154 @@ Created:
     2025-06-13
 
 Reference:
-    Adapted from Fourier-Neural-Operator/train_lightning.py
+    Adapted from: https://github.com/abelsr/Fourier-Neural-Operator/blob/main/training/train.py
 """
 
-import os
-import sys
+import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
+import argparse
 import torch
-import torch.nn as nn
-from torch.utils.data import DataLoader
-import pytorch_lightning as pl
-from pytorch_lightning.loggers import CSVLogger
-from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
+from torch.optim import Adam
+from torch.optim.lr_scheduler import LambdaLR
+from tqdm import tqdm
+import pandas as pd
 
 from models.fno.model import FNO
-from shared.losses import hybrid_loss
-from shared.logger import get_logger
 from shared.data_loader import get_dataloader
-
-logger = get_logger("train_fno_lightning")
-
-
-class LitFNO(pl.LightningModule):
-    """
-    Lightning wrapper for the FNO model with training and validation steps.
-    """
-    def __init__(self, model: nn.Module, alpha: float = 0.1, lr: float = 1e-3):
-        super().__init__()
-        self.model = model
-        self.alpha = alpha
-        self.lr = lr
-        self.save_hyperparameters(ignore=["model"])
-        self.criterion = lambda pred, target: hybrid_loss(pred, target, alpha=self.alpha)
-
-    def training_step(self, batch, batch_idx):
-        x, y = batch
-        pred = self.model(x)
-        loss = self.criterion(pred, y)
-        self.log("train_loss", loss, on_epoch=True, prog_bar=True, logger=True)
-        return loss
-
-    def validation_step(self, batch, batch_idx):
-        x, y = batch
-        pred = self.model(x)
-        loss = self.criterion(pred, y)
-        self.log("val_loss", loss, on_epoch=True, prog_bar=True, logger=True)
-
-    def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr, weight_decay=1e-4)
-        return optimizer
+from shared.logger import get_logger
+from shared.losses import hybrid_loss
 
 
-def main():
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input_path", type=str, required=True)
-    parser.add_argument("--output_path", type=str, required=True)
-    parser.add_argument("--batch_size", type=int, default=4)
-    parser.add_argument("--epochs", type=int, default=200)
-    parser.add_argument("--alpha", type=float, default=0.1)
-    parser.add_argument("--lr", type=float, default=1e-3)
-    parser.add_argument("--log_dir", type=str, default="logs/lightning_fno/")
-    parser.add_argument("--ckpt_dir", type=str, default="checkpoints/lightning_fno/")
-    parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
-    parser.add_argument("--result_dir", type=str, default="results/fno/",
-                    help="Directory to save logs and checkpoints.")
-    args = parser.parse_args()
+class EarlyStopping:
+    def __init__(self, patience=10, delta=0.0):
+        self.patience = patience
+        self.delta = delta
+        self.counter = 0
+        self.best_loss = float("inf")
+        self.early_stop = False
 
-    logger.info("🚀 Starting Lightning FNO Training...")
+    def __call__(self, val_loss):
+        if val_loss < self.best_loss - self.delta:
+            self.best_loss = val_loss
+            self.counter = 0
+        else:
+            self.counter += 1
+            if self.counter >= self.patience:
+                self.early_stop = True
+
+
+def get_clr_scheduler(optimizer, min_lr, max_lr, cycle_length=8):
+    def triangular_clr(epoch):
+        mid = cycle_length // 2
+        ep = epoch % cycle_length
+        scale = ep / mid if ep <= mid else (cycle_length - ep) / mid
+        return min_lr / max_lr + (1 - min_lr / max_lr) * scale
+    return LambdaLR(optimizer, lr_lambda=triangular_clr)
+
+
+def train(args):
+    logger = get_logger("train_fno")
+    logger.info("🚀 Starting FNO training with the following configuration:")
     logger.info(vars(args))
 
-    train_loader = get_dataloader(args.input_path, args.output_path, batch_size=args.batch_size, split="train")
-    val_loader = get_dataloader(args.input_path, args.output_path, batch_size=args.batch_size, split="val")
+    train_loader = get_dataloader(args.input_path, args.output_path,
+                                  batch_size=args.batch_size, split="train", sample_fraction=args.sample_fraction)
+    val_loader = get_dataloader(args.input_path, args.output_path,
+                                batch_size=args.batch_size, split="val", sample_fraction=args.sample_fraction)
 
-    # FNO model
     model = FNO(
         in_channels=1,
         out_channels=1,
-        modes1=16,
-        modes2=16,
-        modes3=16,
-        width=128,
-        lifting_channels=64,
+        modes1=12, modes2=12, modes3=12,
+        width=32,
         add_grid=True
-    )
+    ).to(args.device)
 
-    lit_model = LitFNO(model=model, alpha=args.alpha, lr=args.lr)
+    criterion = lambda pred, target: hybrid_loss(pred, target, alpha=args.alpha)
+    optimizer = Adam(model.parameters(), lr=args.min_lr)
+    scheduler = get_clr_scheduler(optimizer, args.min_lr, args.max_lr)
+    early_stopper = EarlyStopping(patience=args.patience)
 
-    # Logger and Callbacks
-    log_dir = os.path.join(args.result_dir, "logs")
-    ckpt_dir = os.path.join(args.result_dir, "checkpoints")
-    os.makedirs(ckpt_dir, exist_ok=True)
+    # Prepare checkpoint and log filenames
+    os.makedirs(args.ckpt_dir, exist_ok=True)
+    sample_percent = int(args.sample_fraction * 100)
+    model_prefix = f"fno_sample{sample_percent}_epoch{args.epochs}"
+    best_model_path = os.path.join(args.ckpt_dir, f"{model_prefix}_best.pt")
+    final_model_path = os.path.join(args.ckpt_dir, f"{model_prefix}_final.pt")
+    log_path = os.path.join(args.ckpt_dir, f"{model_prefix}_log_train.csv")
 
-    lightning_logger = CSVLogger(save_dir=log_dir, name="fno")
+    log_records = []
 
-    early_stopping = EarlyStopping(
-        monitor="val_loss",
-        patience=10,
-        mode="min",
-        verbose=True
-    )
+    for epoch in range(args.epochs):
+        model.train()
+        epoch_loss = 0.0
+        loop = tqdm(train_loader, desc=f"Epoch [{epoch+1}/{args.epochs}]", leave=False)
 
-    checkpoint_cb = ModelCheckpoint(
-        dirpath=ckpt_dir,
-        filename="best-fno",
-        save_top_k=1,
-        monitor="val_loss",
-        mode="min",
-        save_weights_only=True
-    )
+        for x, y in loop:
+            x, y = x.to(args.device), y.to(args.device)
+            optimizer.zero_grad()
+            pred = model(x)
+            loss = criterion(pred, y)
+            loss.backward()
+            optimizer.step()
+            epoch_loss += loss.item() * x.size(0)
 
-    trainer = pl.Trainer(
-        max_epochs=args.epochs,
-        accelerator="gpu" if args.device.startswith("cuda") else "cpu",
-        logger=lightning_logger,
-        callbacks=[early_stopping, checkpoint_cb],
-        log_every_n_steps=10
-    )
+        scheduler.step()
+        avg_train_loss = epoch_loss / len(train_loader.dataset)
 
-    # Train
-    trainer.fit(lit_model, train_dataloaders=train_loader, val_dataloaders=val_loader)
+        # Validation
+        model.eval()
+        val_loss = 0.0
+        with torch.no_grad():
+            for x_val, y_val in val_loader:
+                x_val, y_val = x_val.to(args.device), y_val.to(args.device)
+                pred_val = model(x_val)
+                loss_val = criterion(pred_val, y_val)
+                val_loss += loss_val.item() * x_val.size(0)
+        avg_val_loss = val_loss / len(val_loader.dataset)
 
-    # Save final model as .pt (standard PyTorch format)
-    torch.save(model.state_dict(), os.path.join(ckpt_dir, "final_model.pt"))
-    logger.info(f"📦 Final PyTorch model saved to {os.path.join(ckpt_dir, 'final_model.pt')}")
+        current_lr = scheduler.get_last_lr()[0]
+        logger.info(f"📉 Epoch {epoch+1:03d} | Train Loss: {avg_train_loss:.6f} | Val Loss: {avg_val_loss:.6f} | LR: {current_lr:.2e}")
+
+        log_records.append({
+            "epoch": epoch + 1,
+            "train_loss": avg_train_loss,
+            "val_loss": avg_val_loss,
+            "lr": current_lr
+        })
+
+        early_stopper(avg_val_loss)
+        if early_stopper.early_stop:
+            logger.info(f"🛑 Early stopping triggered at epoch {epoch+1}")
+            break
+
+        if avg_val_loss <= early_stopper.best_loss:
+            torch.save(model.state_dict(), best_model_path)
+            logger.info(f"✅ Best model saved: {best_model_path}")
+
+    # Save final model and logs
+    torch.save(model.state_dict(), final_model_path)
+    logger.info(f"📦 Final model saved: {final_model_path}")
+
+    pd.DataFrame(log_records).to_csv(log_path, index=False)
+    logger.info(f"📝 Training log saved to: {log_path}")
 
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Train FNO with validation and early stopping.")
+    parser.add_argument("--input_path", type=str, required=True)
+    parser.add_argument("--output_path", type=str, required=True)
+    parser.add_argument("--batch_size", type=int, default=4)
+    parser.add_argument("--epochs", type=int, default=200)
+    parser.add_argument("--min_lr", type=float, default=1e-4)
+    parser.add_argument("--max_lr", type=float, default=1e-3)
+    parser.add_argument("--patience", type=int, default=10)
+    parser.add_argument("--alpha", type=float, default=0.05)
+    parser.add_argument("--ckpt_dir", type=str, default="results/fno/")
+    parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
+    parser.add_argument("--sample_fraction", type=float, default=1.0)
+    args = parser.parse_args()
+
+    train(args)

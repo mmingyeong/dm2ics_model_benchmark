@@ -2,21 +2,21 @@
 train.py
 
 Description:
-    Training script for the 3D U-Net (V-Net style) model using PyTorch.
-    This script loads paired HDF5 volumes (input, target), applies cyclical learning rate,
-    and saves both the best and final model checkpoints.
+Training script for the 3D U-Net (V-Net style) model using PyTorch.
+This script loads paired HDF5 volumes (input, target), applies cyclical learning rate,
+and saves both the best and final model checkpoints.
 
 Author:
-    Mingyeong Yang (양민경), PhD Student, UST-KASI
+Mingyeong Yang (양민경), PhD Student, UST-KASI
 Email:
-    mmingyeong@kasi.re.kr
+mmingyeong@kasi.re.kr
 
 Created:
-    2025-06-10
+2025-06-10
 
 Reference:
-    Adapted from the TensorFlow training script:
-    https://github.com/redeostm/ML_LocalEnv/blob/main/runSingle.py
+Adapted from the TensorFlow training script:
+https://github.com/redeostm/ML_LocalEnv/blob/main/runSingle.py
 """
 
 import sys
@@ -74,24 +74,43 @@ def train(args):
     logger.info(vars(args))
 
     # Load data
-    train_loader = get_dataloader(args.input_path, args.output_path, batch_size=args.batch_size, split="train")
-    val_loader = get_dataloader(args.input_path, args.output_path, batch_size=args.batch_size, split="val")
+    train_loader = get_dataloader(
+        args.input_path, args.output_path,
+        batch_size=args.batch_size, split="train", sample_fraction=args.sample_fraction,
+        shuffle=True, num_workers=0
+    )
+    val_loader = get_dataloader(
+        args.input_path, args.output_path,
+        batch_size=args.batch_size, split="val", sample_fraction=args.sample_fraction,
+        shuffle=False, num_workers=0
+    )
 
-    # Initialize model, loss, optimizer, scheduler
+    logger.info(f"📊 Train samples: {len(train_loader.dataset)}")
+    logger.info(f"📊 Validation samples: {len(val_loader.dataset)}")
+    if isinstance(val_loader.dataset, torch.utils.data.Subset):
+        logger.info(f"📏 Validation Subset: {len(val_loader.dataset.indices)} samples")
+
+    # Model, loss, optimizer
     model = UNet3D().to(args.device)
     criterion = lambda pred, target: hybrid_loss(pred, target, alpha=args.alpha)
     optimizer = Adam(model.parameters(), lr=args.min_lr)
     scheduler = get_clr_scheduler(optimizer, args.min_lr, args.max_lr)
     early_stopper = EarlyStopping(patience=args.patience)
 
+    # Paths
     os.makedirs(args.ckpt_dir, exist_ok=True)
-    log_path = os.path.join(args.ckpt_dir, "log_train.csv")
+    sample_percent = int(args.sample_fraction * 100)
+    model_prefix = f"unet_sample{sample_percent}_epoch{args.epochs}"
+    best_model_path = os.path.join(args.ckpt_dir, f"{model_prefix}_best.pt")
+    final_model_path = os.path.join(args.ckpt_dir, f"{model_prefix}_final.pt")
+    log_path = os.path.join(args.ckpt_dir, f"{model_prefix}_log_train.csv")
+
     log_records = []
 
     for epoch in range(args.epochs):
         model.train()
         epoch_loss = 0.0
-        loop = tqdm(train_loader, desc=f"Epoch [{epoch+1}/{args.epochs}]", leave=False)
+        loop = tqdm(train_loader, desc=f"Epoch [{epoch+1}/{args.epochs}]", leave=True)
 
         for x, y in loop:
             x, y = x.to(args.device), y.to(args.device)
@@ -107,17 +126,28 @@ def train(args):
 
         # Validation
         model.eval()
+        model.to(args.device)  # Safety
         val_loss = 0.0
         with torch.no_grad():
-            for x_val, y_val in val_loader:
+            for batch_idx, (x_val, y_val) in enumerate(val_loader):
+                if batch_idx == 0:
+                    logger.info(f"[DEBUG] First val batch shape: {x_val.shape}")
                 x_val, y_val = x_val.to(args.device), y_val.to(args.device)
                 pred_val = model(x_val)
                 loss_val = criterion(pred_val, y_val)
                 val_loss += loss_val.item() * x_val.size(0)
+
         avg_val_loss = val_loss / len(val_loader.dataset)
 
+        if epoch % 10 == 0:
+            logger.info(
+                f"🔍 Val pred: min={pred_val.min().item():.4f}, max={pred_val.max().item():.4f}, mean={pred_val.mean().item():.4f}"
+            )
+
         current_lr = scheduler.get_last_lr()[0]
-        logger.info(f"📉 Epoch {epoch+1:03d} | Train Loss: {avg_train_loss:.6f} | Val Loss: {avg_val_loss:.6f} | LR: {current_lr:.2e}")
+        logger.info(
+            f"📉 Epoch {epoch+1:03d} | Train Loss: {avg_train_loss:.6f} | Val Loss: {avg_val_loss:.6f} | LR: {current_lr:.2e}"
+        )
 
         log_records.append({
             "epoch": epoch + 1,
@@ -126,23 +156,18 @@ def train(args):
             "lr": current_lr
         })
 
-        # Early stopping check
         early_stopper(avg_val_loss)
         if early_stopper.early_stop:
             logger.info(f"🛑 Early stopping triggered at epoch {epoch+1}")
             break
 
-        # Save best model
         if avg_val_loss <= early_stopper.best_loss:
-            best_model_path = os.path.join(args.ckpt_dir, "best_model.pt")
             torch.save(model.state_dict(), best_model_path)
             logger.info(f"✅ Best model saved: {best_model_path}")
 
-    # Save final model and logs
-    final_path = os.path.join(args.ckpt_dir, "final_model.pt")
-    torch.save(model.state_dict(), final_path)
-    logger.info(f"📦 Final model saved: {final_path}")
-
+    # Final save
+    torch.save(model.state_dict(), final_model_path)
+    logger.info(f"📦 Final model saved: {final_model_path}")
     pd.DataFrame(log_records).to_csv(log_path, index=False)
     logger.info(f"📝 Training log saved to: {log_path}")
 
@@ -156,10 +181,16 @@ if __name__ == "__main__":
     parser.add_argument("--min_lr", type=float, default=1e-4)
     parser.add_argument("--max_lr", type=float, default=1e-3)
     parser.add_argument("--patience", type=int, default=10)
-    parser.add_argument("--alpha", type=float, default=0.1,
-                        help="Weight for spectral loss in hybrid loss function.")
+    parser.add_argument("--alpha", type=float, default=0.05)
     parser.add_argument("--ckpt_dir", type=str, default="results/unet/")
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
+    parser.add_argument("--sample_fraction", type=float, default=1.0)
     args = parser.parse_args()
 
-    train(args)
+    try:
+        train(args)
+    except Exception as e:
+        import traceback
+        print("🔥 Training failed due to exception:")
+        traceback.print_exc()
+        sys.exit(1)

@@ -87,7 +87,7 @@ class FNO(nn.Module):
         # Projection layers
         self.q1 = nn.Linear(self.mid_channels, self.mid_channels)
         self.final = nn.Linear(self.mid_channels, out_channels)
-        self.activation = nn.GELU()
+        #self.activation = nn.GELU()
 
         logger.info("✅ FNO model initialized successfully.")
 
@@ -138,7 +138,7 @@ class FNO(nn.Module):
         # Projection
         x = x.permute(0, 2, 3, 4, 1).contiguous()
         x = self.q1(x)
-        x = self.activation(x)
+        #x = self.activation(x)
         x = self.final(x)
 
         x = x.permute(0, 4, 1, 2, 3).contiguous()

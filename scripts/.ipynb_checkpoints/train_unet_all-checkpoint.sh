@@ -27,15 +27,16 @@ conda activate py312
 echo "🚀 Starting U-Net training job on $(hostname) at $(date)"
 
 python /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/models/unet/train.py \
-  --input_path /caefs/data/IllustrisTNG/subcube/input \
-  --output_path /caefs/data/IllustrisTNG/subcube/output \
-  --batch_size 4 \
-  --epochs 200 \
-  --min_lr 1e-4 \
-  --max_lr 1e-3 \
-  --patience 10 \
-  --alpha 0.1 \
-  --ckpt_dir /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/results/unet \
-  --device cuda
+--input_path /caefs/data/IllustrisTNG/subcube/input \
+--output_path /caefs/data/IllustrisTNG/subcube/output \
+--batch_size 4 \
+--epochs 10 \
+--min_lr 1e-4 \
+--max_lr 1e-3 \
+--patience 10 \
+--alpha 0.05 \
+--ckpt_dir /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/results/unet \
+--device cuda \
+--sample_fraction 0.01
 
 echo "✅ Training completed at $(date)"

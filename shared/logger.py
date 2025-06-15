@@ -62,9 +62,11 @@ def get_logger(name: str, log_dir: str = None, filename: str = None) -> logging.
     # Determine log directory
     if log_dir is None:
         log_dir = os.environ.get("DM2ICS_LOGDIR", None)
-
-    # Add file handler if log_dir is valid
-    if log_dir is not None:
+        if log_dir is None:
+            # ✅ fallback: safe default directory in user's home
+            home_dir = os.path.expanduser("~")
+            log_dir = os.path.join(home_dir, "_dm2ics_model_benchmark", "logs")
+    else:
         try:
             os.makedirs(log_dir, exist_ok=True)
             if filename is None:

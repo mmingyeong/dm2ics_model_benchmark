@@ -57,7 +57,8 @@ class FNO(nn.Module):
         Whether to concatenate coordinate grids to the input.
     """
     def __init__(self, in_channels, out_channels, modes1, modes2, modes3,
-                 width, lifting_channels=None, add_grid=True):
+                 width, activation: nn.Module, lifting_channels=None, add_grid=True):
+
         super().__init__()
 
         self.in_channels = in_channels
@@ -68,6 +69,7 @@ class FNO(nn.Module):
         self.width = width
         self.lifting_channels = lifting_channels
         self.mid_channels = width
+        self.activation = activation
         self.add_grid = add_grid
 
         # Lifting layers
@@ -138,7 +140,7 @@ class FNO(nn.Module):
         # Projection
         x = x.permute(0, 2, 3, 4, 1).contiguous()
         x = self.q1(x)
-        x = self.activation(x)
+        #x = self.activation(x)
         x = self.final(x)
 
         x = x.permute(0, 4, 1, 2, 3).contiguous()

@@ -25,10 +25,10 @@ conda activate py312
 
 echo "🚀 Starting U-Net prediction job on $(hostname) at $(date)"
 
-python models/unet/predict.py \
+python /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/models/unet/predict.py \
   --input_dir /caefs/data/IllustrisTNG/subcube/input \
-  --output_dir /caefs/data/IllustrisTNG/predicted/unet \
-  --model_path /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/results/unet/best_model.pt \
-  --device cuda
+  --output_dir /caefs/data/IllustrisTNG/predictions/unet/Sample20_epoch50 \
+  --model_path /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/results/unet/unet_sample20_epoch50_best.pt \
+  --batch_size 4
 
 echo "✅ Prediction completed at $(date)"

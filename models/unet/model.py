@@ -3,8 +3,16 @@ model.py (UNet3D)
 
 Description:
     Implementation of a 3D U-Net model (V-Net style) for volumetric regression tasks using PyTorch.
-    The architecture includes symmetrical encoder-decoder paths with skip connections and final tanh activation.
-    Suitable for tasks such as cosmological initial condition reconstruction from evolved density fields.
+    The architecture features a symmetrical encoder-decoder structure with skip connections, designed for
+    dense prediction tasks on 3D scientific data such as cosmological density fields.
+    
+    Compared to standard implementations, this model uses:
+        - Reduced channel widths for memory efficiency and faster training,
+        - A linear (identity) final activation function instead of tanh, 
+          to better suit regression targets with values beyond [-1, 1].
+
+    Suitable for tasks such as reconstructing cosmological initial conditions from evolved density fields
+    where precise scalar regression is required.
 
 Author:
     Mingyeong Yang (양민경), PhD Student, UST-KASI
@@ -76,21 +84,22 @@ class ConvBlockDec(nn.Module):
 class UNet3D(nn.Module):
     def __init__(self):
         super().__init__()
-        # Encoding
-        self.enc1 = ConvBlockEnc(1, 128)
-        self.enc2 = ConvBlockEnc(128, 256)
-        self.enc3 = ConvBlockEnc(256, 512)
-        self.enc4 = ConvBlockEnc(512, 1024)
-        self.enc5 = ConvBlockEnc(1024, 2048)
+        # Encoding (채널 수 축소)
+        self.enc1 = ConvBlockEnc(1, 32)
+        self.enc2 = ConvBlockEnc(32, 64)
+        self.enc3 = ConvBlockEnc(64, 128)
+        self.enc4 = ConvBlockEnc(128, 256)
+        self.enc5 = ConvBlockEnc(256, 512)
 
-        # Decoding
-        self.dec4 = ConvBlockDec(2048 + 1024, 1024)
-        self.dec3 = ConvBlockDec(1024 + 512, 512)
-        self.dec2 = ConvBlockDec(512 + 256, 256)
-        self.dec1 = ConvBlockDec(256 + 128, 128)
-        self.out = ConvBlockDec(128 + 1, 1)  # input도 1채널
+        # Decoding (채널 수 대응)
+        self.dec4 = ConvBlockDec(512 + 256, 256)
+        self.dec3 = ConvBlockDec(256 + 128, 128)
+        self.dec2 = ConvBlockDec(128 + 64, 64)
+        self.dec1 = ConvBlockDec(64 + 32, 32)
+        self.out = ConvBlockDec(32 + 1, 1)  # input도 1채널
 
-        self.final_activation = nn.Tanh()
+        # 🔁 마지막 Activation: Tanh → Identity (또는 제거)
+        self.final_activation = nn.Identity()
 
     def forward(self, x):
         # Encoding path

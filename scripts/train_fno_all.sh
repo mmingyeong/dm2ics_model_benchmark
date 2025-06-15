@@ -9,11 +9,9 @@
 
 cd $PBS_O_WORKDIR
 
-# 로그 디렉토리 생성
 export LOGDIR=/home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/scripts/logs
 mkdir -p "$LOGDIR"
 
-# 로그 파일명에 PBS 잡 ID 포함
 LOGFILE="$LOGDIR/train_fno_${PBS_JOBID}.log"
 exec > "$LOGFILE" 2>&1
 
@@ -25,14 +23,21 @@ conda activate py312
 
 echo "🚀 Starting FNO training job on $(hostname) at $(date)"
 
+echo "📦 Python: $(which python)"
+python --version
+python -c "print('✅ Hello from inline Python')"
+
 python /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/models/fno/train.py \
   --input_path /caefs/data/IllustrisTNG/subcube/input \
   --output_path /caefs/data/IllustrisTNG/subcube/output \
   --batch_size 4 \
-  --epochs 200 \
-  --alpha 0.1 \
-  --lr 1e-3 \
-  --result_dir /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/results/fno \
-  --device cuda
+  --epochs 100 \
+  --min_lr 1e-4 \
+  --max_lr 1e-3 \
+  --patience 10 \
+  --alpha 0.05 \
+  --ckpt_dir /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/results/fno \
+  --device cuda \
+  --sample_fraction 1
 
 echo "✅ FNO training completed at $(date)"

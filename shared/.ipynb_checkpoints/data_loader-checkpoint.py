@@ -14,10 +14,12 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
+import numpy as np
 import h5py
 import torch
 from glob import glob
 from torch.utils.data import Dataset
+from torch.utils.data import Subset
 from torch.utils.data import DataLoader
 
 from shared.logger import get_logger
@@ -81,7 +83,7 @@ class HDF5Dataset(Dataset):
         return x, y
 
 
-def get_dataloader(input_dir, output_dir, batch_size, split="train", shuffle=True):
+def get_dataloader(input_dir, output_dir, batch_size, split="train", shuffle=True, sample_fraction=1.0):
     """
     Returns a DataLoader for the specified split by selecting appropriate HDF5 files.
 
@@ -97,6 +99,8 @@ def get_dataloader(input_dir, output_dir, batch_size, split="train", shuffle=Tru
         One of ["train", "val", "test"].
     shuffle : bool
         Whether to shuffle the data.
+    sample_fraction : float, optional
+        Fraction of the dataset to sample (applies only to 'train' split). Default is 1.0 (use all data).
 
     Returns
     -------
@@ -110,17 +114,26 @@ def get_dataloader(input_dir, output_dir, batch_size, split="train", shuffle=Tru
         "Mismatch between number of input and output HDF5 files."
 
     if split == "train":
-        selected_inputs = all_input_files[:7]
-        selected_outputs = all_output_files[:7]
+        selected_inputs = all_input_files[:8]
+        selected_outputs = all_output_files[:8]
     elif split == "val":
-        selected_inputs = [all_input_files[7]]
-        selected_outputs = [all_output_files[7]]
+        selected_inputs = all_input_files[8:10]
+        selected_outputs = all_output_files[8:10]
     elif split == "test":
-        selected_inputs = [all_input_files[8]]
-        selected_outputs = [all_output_files[8]]
+        selected_inputs = all_input_files[10:12]
+        selected_outputs = all_output_files[10:12]
     else:
         raise ValueError(f"Invalid split: {split}. Must be one of ['train', 'val', 'test'].")
 
     logger.info(f"📂 Split: {split} | Files: {len(selected_inputs)}")
     dataset = HDF5Dataset(selected_inputs, selected_outputs)
-    return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
+
+    # Apply random subsampling for training only
+    if split == "train" and 0.0 < sample_fraction < 1.0:
+        total_len = len(dataset)
+        sample_size = int(sample_fraction * total_len)
+        sampled_indices = np.random.choice(total_len, size=sample_size, replace=False)
+        dataset = Subset(dataset, sampled_indices)
+        logger.info(f"🔎 Sampled {sample_size} / {total_len} training samples ({sample_fraction*100:.1f}%)")
+
+    return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=0)
