@@ -1,16 +1,13 @@
-# Ignore all log files
+# === General logs ===
 *.log
-
-# Ignore logs/ directory
 logs/
 
-# Ignore large model files
-*.pt
-results/unet/
-results/fno/
-tests/*.pt
-
-# Ignore large model files
+# === Large model files ===
 *.pt
 *.pth
 *.ckpt
+
+# === Specific folders containing large models ===
+results/unet/
+results/fno/
+tests/*.pt
