@@ -55,23 +55,6 @@ dm2ics_model_benchmark/
 
 ---
 
-## 📦 Installation
-
-Create a virtual environment using `conda`:
-
-```bash
-conda env create -f environment.yml
-conda activate dm2ics
-```
-
-Or use `pip`:
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
 ## 🧪 Quick Start
 
 ### Training
@@ -122,15 +105,6 @@ Make sure `shared/data_loader.py` is configured to match your dataset structure.
 | U-Net | 3D V-Net-style CNN         | Local receptive field, strong spatial localization |
 | FNO   | Spectral operator learning | Long-range interactions via Fourier domain         |
 
----
-
-## 📈 Evaluation Metrics
-
-* Mean Squared Error (MSE)
-* Power Spectrum Recovery
-* Peak Signal-to-Noise Ratio (PSNR)
-
-See `evaluation/` for implementations.
 
 ---
 

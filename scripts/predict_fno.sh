@@ -6,6 +6,8 @@
 #PBS -l walltime=24:00:00
 #PBS -j oe
 #PBS -V
+#PBS -m abe
+#PBS -M mmingyeong@kasi.re.kr
 
 cd $PBS_O_WORKDIR
 
@@ -27,8 +29,8 @@ echo "🚀 Starting FNO prediction job on $(hostname) at $(date)"
 
 python /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/models/fno/predict.py \
   --input_dir /caefs/data/IllustrisTNG/subcube/input \
-  --output_dir /caefs/data/IllustrisTNG/predictions/fno/Sample20_epoch50 \
-  --model_path /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/results/fno/fno_sample20_epoch50_best.pt \
+  --output_dir /caefs/data/IllustrisTNG/predictions/fno/Sample100_epoch100 \
+  --model_path /home/users/mmingyeong/_dm2ics_model_benchmark/dm2ics_model_benchmark/results/fno/fno_sample100_epoch100_best.pt \
   --batch_size 4
 
 echo "✅ FNO prediction completed at $(date)"

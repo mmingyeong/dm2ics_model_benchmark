@@ -6,6 +6,8 @@
 #PBS -l walltime=48:00:00
 #PBS -j oe
 #PBS -V
+#PBS -m abe
+#PBS -M mmingyeong@kasi.re.kr
 
 cd $PBS_O_WORKDIR
 
