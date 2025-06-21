@@ -135,6 +135,7 @@ for i, (med, std, label) in enumerate(zip(
     ax.set_title(label)
     ax.legend()
 
+
 plt.tight_layout()
 plt.savefig("figure5_style_comparison.png", dpi=300)
 plt.show()
