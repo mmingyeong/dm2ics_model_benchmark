@@ -45,9 +45,11 @@ log_bins = np.linspace(-5, 5, 200)
 centers = 0.5 * (log_bins[:-1] + log_bins[1:])
 
 # ===== Joint Distribution =====
+logger.info("All data loaded. Proceeding to reshape and sample...")
 gt_sample = gt_data.reshape(-1)
 unet_sample = unet_data.reshape(-1)
 fno_sample = fno_data.reshape(-1)
+logger.info("Reshaping complete. Proceeding to sampling...")
 idx = np.random.choice(len(gt_sample), size=sample_voxels, replace=False)
 bins = np.logspace(-5, 5, 200)
 H_unet, xedges, yedges = np.histogram2d(gt_sample[idx], unet_sample[idx], bins=[bins, bins], density=True)
@@ -57,15 +59,18 @@ H_fno, _, _ = np.histogram2d(gt_sample[idx], fno_sample[idx], bins=[bins, bins],
 def log_histogram_stats(data, bins):
     hists = []
     for i in range(data.shape[0]):
-        vals = np.log10(data[i].flatten())
+        vals = np.log10(data[i].flatten() + 1e-10)
         hist, _ = np.histogram(vals, bins=bins, density=True)
         hists.append(hist)
     hists = np.array(hists)
     return np.mean(hists, axis=0), np.std(hists, axis=0)
 
+logger.info("All data loaded. Proceeding to mean, std...")
 gt_hist_mean, gt_hist_std = log_histogram_stats(gt_data, log_bins)
 unet_hist_mean, unet_hist_std = log_histogram_stats(unet_data, log_bins)
 fno_hist_mean, fno_hist_std = log_histogram_stats(fno_data, log_bins)
+
+
 
 # ===== Correlation =====
 def compute_correlation(data):
