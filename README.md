@@ -5,9 +5,11 @@
 
 This repository provides a modular benchmarking framework for evaluating various deep learning models that reconstruct cosmological initial conditions from the evolved dark matter density field.
 
-The initial version focuses on two representative architectures:
-- **U-Net (V-Net style, PyTorch-based)**
+The benchmark currently includes four representative models:
+- **U-Net (V-Net style 3D CNN)**
 - **Fourier Neural Operator (FNO)**
+- **Vision Transformer (ViT) for voxel-to-voxel regression**
+- **Conditional Generative Adversarial Network (cGAN)**
 
 The repository is designed to be scalable and extendable to additional models such as ViT and cGAN in the future.
 
@@ -18,71 +20,24 @@ The repository is designed to be scalable and extendable to additional models su
 ```
 
 dm2ics_model_benchmark/
-├── scripts/              # Shell scripts for training/evaluation automation
-│   ├── train_all.sh
-│   └── evaluate_all.sh
-│
-├── evaluation/           # Post-training evaluation tools
-│   ├── compute_metrics.py
-│   ├── plot_power_spectrum.py
-│   └── compare_outputs.py
-│
-├── models/               # Model-specific training and inference logic
-│   ├── unet/
-│   │   ├── model.py
-│   │   ├── train.py
-│   │   └── predict.py
-│   └── fno/
-│       ├── model.py
-│       ├── train.py
-│       └── predict.py
-│
-├── results/              # Saved checkpoints, predictions, and logs
-│   ├── unet/
-│   └── fno/
-│
-├── shared/               # Common utilities used across all models
-│   ├── data_loader.py    # HDF5 loader and preprocessing
-│   ├── metrics.py        # MSE, PSNR, power spectrum, etc.
-│   ├── losses.py         # Loss functions (e.g., MSE, spectral loss)
-│   └── logger.py         # Logging utility
-│
-├── environment.yml       # Conda environment file
-├── requirements.txt      # Python dependencies (for pip)
-└── README.md             # Project overview and instructions
-
-```
-
----
-
-## 🧪 Quick Start
-
-### Training
-
-```bash
-bash scripts/train_all.sh
-```
-
-Or train a single model manually:
-
-```bash
-python models/unet/train.py      # For U-Net
-python models/fno/train.py       # For FNO
-```
-
-### Inference
-
-```bash
-python models/unet/predict.py
-```
-
-### Evaluation
-
-```bash
-bash scripts/evaluate_all.sh
-# or run individual evaluation modules
-python evaluation/compute_metrics.py
-python evaluation/plot_power_spectrum.py
+├── evaluation/ # Evaluation utilities (loss curves, power spectrum, etc.)
+├── models/ # Model implementations and training/inference logic
+│ ├── unet/
+│ ├── fno/
+│ ├── vit/
+│ └── cgan/
+├── pretrain/ # Lightweight pretraining/testing scripts
+├── results/ # Logs, checkpoints, predictions
+│ ├── unet/
+│ ├── fno/
+│ ├── vit_test/
+│ └── ...
+├── scripts/ # Shell scripts to automate experiments
+├── shared/ # Common utilities (data loading, logging, loss, metrics)
+├── tests/ # Jupyter notebooks or unit tests for sanity checks
+├── tuning/ # Hyperparameter tuning setup (e.g., Optuna)
+├── .gitignore
+└── README.md
 ```
 
 ---
@@ -100,11 +55,19 @@ Make sure `shared/data_loader.py` is configured to match your dataset structure.
 
 ## 🧠 Models
 
-| Model | Architecture               | Purpose                                            |
-| ----- | -------------------------- | -------------------------------------------------- |
-| U-Net | 3D V-Net-style CNN         | Local receptive field, strong spatial localization |
-| FNO   | Spectral operator learning | Long-range interactions via Fourier domain         |
+| Model | Architecture              | Characteristics                                        |
+| ----- | ------------------------- | ------------------------------------------------------ |
+| U-Net | 3D V-Net-style CNN        | Local convolution, spatial detail preservation         |
+| FNO   | Fourier-based operator    | Global receptive field, frequency-domain processing    |
+| ViT   | 3D Vision Transformer     | Global attention across voxels, long-range correlation |
+| cGAN  | Generator + Discriminator | Adversarial training for sharper outputs               |
 
+---
+
+## 🔍 Tuning & Pretraining
+Lightweight sanity-check notebooks are available in pretrain/.
+
+Hyperparameter tuning configurations are maintained in tuning/, potentially using Optuna or similar frameworks.
 
 ---
 
